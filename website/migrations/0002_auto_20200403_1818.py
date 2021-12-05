@@ -7,13 +7,15 @@ import website.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('website', '0001_initial'),
+        ("website", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='resume',
-            field=models.FileField(blank=True, null=True, upload_to=website.models.Profile.get_file_path),
+            model_name="profile",
+            name="resume",
+            field=models.FileField(
+                blank=True, null=True, upload_to=website.models.Profile.get_file_path
+            ),
         ),
     ]

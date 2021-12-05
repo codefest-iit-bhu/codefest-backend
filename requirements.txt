@@ -42,6 +42,7 @@ lazy-object-proxy==1.3.1
 MarkupSafe==1.1.0
 mccabe==0.6.1
 msgpack==0.6.1
+pre-commit==2.16.0
 protobuf==3.6.1
 psycopg2-binary==2.8
 pyAesCrypt==0.4.3
