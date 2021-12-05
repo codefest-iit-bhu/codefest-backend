@@ -15,17 +15,41 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='VerifiedAccount',
+            name="VerifiedAccount",
             fields=[
-                ('uid', models.CharField(editable=False, max_length=64, primary_key=True, serialize=False)),
-                ('provider', models.CharField(choices=[('facebook.com', 'Facebook'), ('google.com', 'Google'), ('github.com', 'Github'), ('email', 'Email')], max_length=15)),
-                ('provider_uid', models.CharField(max_length=64)),
-                ('is_verified', models.BooleanField(default=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='verified_account', related_query_name='account', to=settings.AUTH_USER_MODEL)),
+                (
+                    "uid",
+                    models.CharField(
+                        editable=False, max_length=64, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "provider",
+                    models.CharField(
+                        choices=[
+                            ("facebook.com", "Facebook"),
+                            ("google.com", "Google"),
+                            ("github.com", "Github"),
+                            ("email", "Email"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("provider_uid", models.CharField(max_length=64)),
+                ("is_verified", models.BooleanField(default=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="verified_account",
+                        related_query_name="account",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='verifiedaccount',
-            unique_together={('provider', 'provider_uid')},
+            name="verifiedaccount",
+            unique_together={("provider", "provider_uid")},
         ),
     ]

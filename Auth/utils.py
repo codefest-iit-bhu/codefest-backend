@@ -4,8 +4,9 @@ from rest_framework.exceptions import ValidationError
 import requests
 import json
 from django.conf import settings
-class FirebaseAPI:
 
+
+class FirebaseAPI:
     @classmethod
     def verify_id_token(cls, token):
         try:
@@ -13,7 +14,8 @@ class FirebaseAPI:
             return decoded_token
         except ValueError:
             raise ValidationError(
-                'Invalid Firebase ID Token.', HTTP_422_UNPROCESSABLE_ENTITY)
+                "Invalid Firebase ID Token.", HTTP_422_UNPROCESSABLE_ENTITY
+            )
 
     # @classmethod
     # def get_provider_uid(cls, jwt, provider):
@@ -34,24 +36,26 @@ class FirebaseAPI:
             github.com
             password
         """
-        provider = jwt['firebase']['sign_in_provider']
+        provider = jwt["firebase"]["sign_in_provider"]
         from .models import VerifiedAccount
-        if provider not in [VerifiedAccount.AUTH_FACEBOOK_PROVIDER, 
-        VerifiedAccount.AUTH_EMAIL_PROVIDER, 
-        VerifiedAccount.AUTH_GITHUB_PROVIDER, 
-        VerifiedAccount.AUTH_GOOGLE_PROVIDER]:
-            raise ValidationError('Given provider not supported')
-        return provider
 
+        if provider not in [
+            VerifiedAccount.AUTH_FACEBOOK_PROVIDER,
+            VerifiedAccount.AUTH_EMAIL_PROVIDER,
+            VerifiedAccount.AUTH_GITHUB_PROVIDER,
+            VerifiedAccount.AUTH_GOOGLE_PROVIDER,
+        ]:
+            raise ValidationError("Given provider not supported")
+        return provider
 
     @classmethod
     def delete_user_by_uid(cls, uid):
         auth.delete_user(uid)
 
     @classmethod
-    def get_email_confirmation_status(cls,uid):
+    def get_email_confirmation_status(cls, uid):
         return auth.get_user(uid).email_verified
-        
+
 
 # class SendGridAPI:
 #     url = "https://api.sendgrid.com/v3/mail/send"
@@ -65,7 +69,7 @@ class FirebaseAPI:
 #         ],
 #         'from': {
 #             'email':'hooligans@lolcode.com',
-#             'name':' CodeFest'        
+#             'name':' CodeFest'
 #         },
 #         'subject': 'Verify your Email for Codefest',
 #         'content': [
@@ -85,5 +89,5 @@ class FirebaseAPI:
 
 #     @classmethod
 #     def send_verification_email(to, confirmation_url):
-        
+
 #         return requests.request("POST", __class__.url, data=__class__.payload, headers=__class__.headers)
