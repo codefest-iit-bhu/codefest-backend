@@ -40,19 +40,19 @@ ALLOWED_HOSTS = ["codefest-api.herokuapp.com", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
-    'chat_bot',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'website',
-    'Auth',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'drf_yasg',
+    "channels",
+    "chat_bot",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "website",
+    "Auth",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -215,16 +215,16 @@ LOGGING = {
 CELERY_TASK_SERIALIZER = "json"
 CELERY_BROKER_URL = "amqp://localhost"
 if not DEBUG:
-    CELERY_BROKER_URL=config('CLOUDAMQP_URL')
+    CELERY_BROKER_URL = config("CLOUDAMQP_URL")
 
 
-ASGI_APPLICATION = 'codefest.asgi.application'
+ASGI_APPLICATION = "codefest.asgi.application"
 CHANNEL_LAYERS = {
-    'default': {
+    "default": {
         # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
         # 'CONFIG': {
         #     "hosts": [('127.0.0.1', 6379)],
         # },
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
