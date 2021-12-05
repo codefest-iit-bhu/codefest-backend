@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Auth', '0002_auto_20190331_0158'),
+        ("Auth", "0002_auto_20190331_0158"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='verifiedaccount',
-            name='provider_uid',
+            model_name="verifiedaccount",
+            name="provider_uid",
             field=models.CharField(blank=True, max_length=64, null=True),
         ),
     ]

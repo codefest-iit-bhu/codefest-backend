@@ -6,9 +6,11 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 
+
 def create_auth_token(user):
     token, created = Token.objects.get_or_create(user=user)
     return token
+
 
 # Create your views here.
 class LoginView(generics.GenericAPIView):
@@ -18,7 +20,8 @@ class LoginView(generics.GenericAPIView):
 
     Return the Authentication Token Object's key.
     """
-    authentication_classes=[]
+
+    authentication_classes = []
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
@@ -26,25 +29,28 @@ class LoginView(generics.GenericAPIView):
         pass
 
     def login(self):
-        validated_data=self.serializer.validated_data
-        self.user = validated_data['user']
-        self.verification_status = validated_data['is_verified']
-        self.is_profile_complete = validated_data['is_profile_complete']
+        validated_data = self.serializer.validated_data
+        self.user = validated_data["user"]
+        self.verification_status = validated_data["is_verified"]
+        self.is_profile_complete = validated_data["is_profile_complete"]
         self.token = create_auth_token(self.user)
 
     def get_response(self):
-        response=LoginResponseSerializer({
-            'user_id': self.user.pk,
-            'token': self.token,
-            'verification_status':self.verification_status,
-            'is_profile_complete':self.is_profile_complete,
-        })
+        response = LoginResponseSerializer(
+            {
+                "user_id": self.user.pk,
+                "token": self.token,
+                "verification_status": self.verification_status,
+                "is_profile_complete": self.is_profile_complete,
+            }
+        )
         return Response(response.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         self.request = request
         self.serializer = self.get_serializer(
-            data=request.data, context={'request': request})
+            data=request.data, context={"request": request}
+        )
         self.serializer.is_valid(raise_exception=True)
 
         self.login()
@@ -52,9 +58,9 @@ class LoginView(generics.GenericAPIView):
 
 
 class RegisterView(generics.GenericAPIView):
-    authentication_classes=[]
-    permission_classes=[AllowAny]
-    serializer_class=RegisterSerializer
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    serializer_class = RegisterSerializer
 
     def get_queryset(self, *args, **kwargs):
         pass
@@ -64,19 +70,20 @@ class RegisterView(generics.GenericAPIView):
         self.token = create_auth_token(self.user)
 
     def get_response(self):
-        response= RegisterResponseSerializer({
-            'user_id':self.user.pk,
-            'token':self.token,
-            'verification_status':self.user.verified_account.is_verified,
-        })
+        response = RegisterResponseSerializer(
+            {
+                "user_id": self.user.pk,
+                "token": self.token,
+                "verification_status": self.user.verified_account.is_verified,
+            }
+        )
         return Response(response.data, status=status.HTTP_200_OK)
 
-    def post(self,request,*args,**kwargs):
-        self.request=request
+    def post(self, request, *args, **kwargs):
+        self.request = request
         self.serializer = self.get_serializer(
-            data=request.data , context={'request': request}
+            data=request.data, context={"request": request}
         )
         self.serializer.is_valid(raise_exception=True)
         self.register()
         return self.get_response()
-        
