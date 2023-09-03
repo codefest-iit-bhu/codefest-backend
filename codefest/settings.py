@@ -12,11 +12,13 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import dj_database_url
-from decouple import config
+from dotenv import load_dotenv
 from google.oauth2 import service_account
 import pyAesCrypt
 import firebase_admin
 from firebase_admin import credentials
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,7 +34,7 @@ DEBUG = int(os.environ.get("DEBUG", "1"))
 if DEBUG:
     SECRET_KEY = "2xnn%tj(@mc(n^io&c^j0*=bq$7kwe&)o$+mk8d=!jujiueb(s"
 else:
-    SECRET_KEY = config("SECRET_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", '')
 
 ALLOWED_HOSTS = ["codefest-api.herokuapp.com", "127.0.0.1"]
 
@@ -157,9 +159,9 @@ if not DEBUG:
             pyAesCrypt.decryptStream(
                 encrypted_file,
                 decrypted_file,
-                config("SERVICE_ACCOUNT_DECRYPT_KEY"),
+                os.getenv("SERVICE_ACCOUNT_DECRYPT_KEY", ""),
                 64 * 1024,
-                int(config("SERVICE_ACCOUNT_ENC_SIZE")),
+                int(os.getenv("SERVICE_ACCOUNT_ENC_SIZE", "")),
             )
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, "service_account.json"))
@@ -180,10 +182,10 @@ CSRF_TRUSTED_ORIGINS = (
     "0.0.0.0:8080",
 )
 
-GOOGLE_RECAPTCHA_SECRET_KEY = config("GOOGLE_RECAPTCHA_SECRET_KEY")
+GOOGLE_RECAPTCHA_SECRET_KEY = os.getenv("GOOGLE_RECAPTCHA_SECRET_KEY", "")
 GOOGLE_RECAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify"
 
-SENDGRID_API_KEY = config("SENDGRID_API_KEY")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
 
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_BUCKET_NAME = "codefest19.appspot.com"
@@ -215,7 +217,7 @@ LOGGING = {
 CELERY_TASK_SERIALIZER = "json"
 CELERY_BROKER_URL = "amqp://localhost"
 if not DEBUG:
-    CELERY_BROKER_URL = config("CLOUDAMQP_URL")
+    CELERY_BROKER_URL = os.getenv("CLOUDAMQP_URL", "")
 
 
 ASGI_APPLICATION = "codefest.asgi.application"

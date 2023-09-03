@@ -50,7 +50,7 @@ pyasn1==0.4.5
 pyasn1-modules==0.2.4
 pycparser==2.19
 pylint==2.3.1
-python-decouple==3.1
+python-dotenv==0.20.0
 pytz==2018.9
 requests==2.21.0
 rsa==4.0
