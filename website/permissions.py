@@ -9,6 +9,6 @@ class AllowCompleteAndVerified(permissions.BasePermission):
             if request.user.profile.is_profile_complete:
                 if request.user.verified_account.get_verified_status():
                     return True
-        except:
+        except Exception as e:
             return False
         return False

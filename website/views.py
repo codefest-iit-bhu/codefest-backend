@@ -1,16 +1,20 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import authentication, permissions, generics, mixins, status
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import parser_classes
-from rest_framework.parsers import MultiPartParser
-from .serializers import *
-from website.permissions import AllowCompleteAndVerified
-from .models import *
 import json
 import logging
+
+from django.shortcuts import render
+from rest_framework import (authentication, generics, mixins, permissions,
+                            status)
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from website.permissions import AllowCompleteAndVerified
+
+from .models import *
+from .serializers import *
 
 logger = logging.getLogger("django")
 

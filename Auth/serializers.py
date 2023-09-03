@@ -1,10 +1,12 @@
-from rest_framework import serializers
-from .utils import FirebaseAPI
-from .models import *
-from website.models import Profile, ValidReferral
-from django.conf import settings
-from rest_framework.exceptions import ParseError
 import requests
+from django.conf import settings
+from rest_framework import serializers
+from rest_framework.exceptions import ParseError
+
+from website.models import Profile, ValidReferral
+
+from .models import *
+from .utils import FirebaseAPI
 
 
 class LoginSerializer(serializers.Serializer):
@@ -70,7 +72,7 @@ class RegisterSerializer(serializers.Serializer):
         return FirebaseAPI.verify_id_token(access_token)
 
     def validate_first_name(self, name):
-        if name == None or name == "":
+        if name is None or name == "":
             raise serializers.ValidationError("First Name cannot be blank")
         return name
 
@@ -81,7 +83,7 @@ class RegisterSerializer(serializers.Serializer):
             referred_by = Profile.objects.get(referral_code=code)
             if not referred_by.get_or_set_profile_status():
                 raise serializers.ValidationError("Invalid Referral Code")
-        except:
+        except Exception as e:
             raise serializers.ValidationError("Invalid Referral Code")
         return referred_by
 

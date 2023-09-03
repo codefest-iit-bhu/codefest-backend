@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+
 import dj_database_url
-from dotenv import load_dotenv
-from google.oauth2 import service_account
-import pyAesCrypt
 import firebase_admin
+import pyAesCrypt
+from dotenv import load_dotenv
 from firebase_admin import credentials
+from google.oauth2 import service_account
 
 load_dotenv()
 

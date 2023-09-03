@@ -1,9 +1,10 @@
-from firebase_admin import auth
-from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
-from rest_framework.exceptions import ValidationError
-import requests
 import json
+
+import requests
 from django.conf import settings
+from firebase_admin import auth
+from rest_framework.exceptions import ValidationError
+from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 
 class FirebaseAPI:
@@ -81,7 +82,6 @@ class FirebaseAPI:
 
 #     }
 #     payload = json.dumps(payload)
-#     payload = "{\"personalizations\":[{\"to\":[{\"email\":\"{receiver}\",\"name\":\"John Doe\"}],\"dynamic_template_data\":{\"verb\":\"\",\"adjective\":\"\",\"noun\":\"\",\"currentDayofWeek\":\"\"},\"subject\":\"Hello, World!\"}],\"from\":{\"email\":\"noreply@johndoe.com\",\"name\":\"John Doe\"},\"reply_to\":{\"email\":\"noreply@johndoe.com\",\"name\":\"John Doe\"},\"template_id\":\"d-8096b5dacb254c8b882816f22d1d11fe\"}"
 #     headers = {
 #     'authorization': f"Bearer {settings.SENDGRID_API_KEY}",
 #     'content-type': "application/json"
