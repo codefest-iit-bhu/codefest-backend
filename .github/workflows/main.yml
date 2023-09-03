@@ -2,9 +2,9 @@ name: Run tests and code checks
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -31,7 +31,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Apply isort
       run: |
-        isort . -rc --skip-glob="**/venv" --check-only
+        isort . -rc --check-only
     - name: Apply pycodestyle
       run: |
         pycodestyle ./ --config=./.pycodestylerc
