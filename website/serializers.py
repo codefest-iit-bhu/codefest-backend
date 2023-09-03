@@ -1,8 +1,10 @@
-from rest_framework import serializers
-from .models import *
+import logging
+
 from django.core.validators import RegexValidator
 from drf_yasg.utils import swagger_serializer_method
-import logging
+from rest_framework import serializers
+
+from .models import *
 
 phone_regex = RegexValidator(
     regex=r"^\+\d{9,15}$",
@@ -119,8 +121,7 @@ class TeamCreationSerializer(serializers.Serializer):
             raise serializers.ValidationError("Team name unavailable")
 
         if (
-            Membership.objects.filter(team__event=event, profile=user.profile).count()
-            != 0
+            Membership.objects.filter(team__event=event, profile=user.profile).count() != 0
         ):
             raise serializers.ValidationError(
                 "You cannot be part of more than one team for the same event"
@@ -155,8 +156,7 @@ class TeamJoinSerializer(serializers.Serializer):
             raise serializers.ValidationError("Maximum Size of Team Reached")
 
         if (
-            Membership.objects.filter(team__event=event, profile=user.profile).count()
-            != 0
+            Membership.objects.filter(team__event=event, profile=user.profile).count() != 0
         ):
             raise serializers.ValidationError(
                 "You cannot be part of more than one team for the same event"
@@ -251,7 +251,7 @@ class EventSerializer(serializers.ModelSerializer):
         profile = self.context["request"].user.profile
         try:
             team = profile.team_members.get(event=obj)
-        except:
+        except Exception as e:
             return None
         return TeamDetailSerializer(team, context=self.context).data
 

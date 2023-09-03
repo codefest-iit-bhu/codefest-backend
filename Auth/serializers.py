@@ -1,10 +1,12 @@
-from rest_framework import serializers
-from .utils import FirebaseAPI
-from .models import *
-from website.models import Profile, ValidReferral
-from django.conf import settings
-from rest_framework.exceptions import ParseError
 import requests
+from django.conf import settings
+from rest_framework import serializers
+from rest_framework.exceptions import ParseError
+
+from website.models import Profile, ValidReferral
+
+from .models import *
+from .utils import FirebaseAPI
 
 
 class LoginSerializer(serializers.Serializer):

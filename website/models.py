@@ -1,18 +1,20 @@
-from django.db import models
-from django.contrib.auth.models import User
-import uuid
-from django.utils.crypto import get_random_string
-from django.core.exceptions import ValidationError
 import hashlib
+import uuid
+
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.crypto import get_random_string
+from django.utils.functional import cached_property
+from django.utils.timezone import now
 from hashids import Hashids
+
+from Auth.utils import FirebaseAPI
 
 hashids_team = Hashids(min_length=7, salt="4fa6b775541a91c93fe92df0788d2321")
 Hashids_referral = Hashids(min_length=5, salt="bbfdac22c617317cdc9ea7bc3a760188")
-from Auth.utils import FirebaseAPI
-from django.utils.functional import cached_property
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.utils.timezone import now
 
 # Create your models here.
 
@@ -164,8 +166,7 @@ class Team(models.Model):
 
     def join_team(self, profile, acc_code):
         if (
-            acc_code == self.access_code
-            and self.total_members() < self.event.max_members
+            acc_code == self.access_code and self.total_members() < self.event.max_members
         ):
             if self.total_members() + 1 >= self.event.min_members:
                 self.is_active = True
@@ -199,7 +200,7 @@ class Membership(models.Model):
         unique_together = ("team", "profile")
 
     def __str__(self):
-        if self.profile != None:
+        if self.profile is not None:
             return str(self.profile) + " from team " + str(self.team)
         return "Member ID#" + str(self.id)
 
