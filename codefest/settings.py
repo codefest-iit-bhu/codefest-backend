@@ -153,19 +153,6 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-if not DEBUG:
-    encFileSize = os.stat("service_account.json.aes").st_size
-    with open("service_account.json.aes", "rb") as encrypted_file:
-        with open("service_account.json", "wb") as decrypted_file:
-            # decrypt file stream
-            pyAesCrypt.decryptStream(
-                encrypted_file,
-                decrypted_file,
-                os.getenv("SERVICE_ACCOUNT_DECRYPT_KEY", ""),
-                64 * 1024,
-                encFileSize,
-            )
-
 cred = credentials.Certificate(os.path.join(BASE_DIR, "service_account.json"))
 default_app = firebase_admin.initialize_app(cred)
 
