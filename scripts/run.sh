@@ -5,6 +5,6 @@ set -e
 python manage.py collectstatic --noinput
 python manage.py migrate
 
-uwsgi --socket :9000 --workers 4 --master --enable-threads --module codefest.wsgi
+gunicorn -w 4 --bind 127.0.0.1:8000 --timeout 120 codefest.wsgi
 
 exec "$@"

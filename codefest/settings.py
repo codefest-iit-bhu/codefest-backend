@@ -45,6 +45,8 @@ ALLOWED_HOSTS.extend(
     )
 )
 
+CORS_ALLOW_HEADERS = "*"
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8080', 'http://codefest-api.iitbhu.tech']
 
 # Application definition
 
@@ -157,8 +159,9 @@ USE_TZ = True
 STATIC_URL = '/static/static/'
 MEDIA_URL = '/static/media/'
 
-MEDIA_ROOT = '/vol/web/media'
-STATIC_ROOT = '/vol/web/static'
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
 
 # if not DEBUG:
 #     with open("service_account.json.aes", "rb") as encrypted_file:
