@@ -37,7 +37,7 @@ if DEBUG:
 else:
     SECRET_KEY = os.getenv("SECRET_KEY", '')
 
-ALLOWED_HOSTS = ["codefest-api.herokuapp.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["codefest-api.iitbhu.tech", "127.0.0.1", "localhost"]
 ALLOWED_HOSTS.extend(
     filter(
         None,
