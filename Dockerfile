@@ -12,6 +12,8 @@ EXPOSE 8000
 ARG DEV=false
 RUN apt-get update && \
     apt-get install -y gcc git && \
+    # apt-get install -y default-libmysqlclient-dev && \
+    # rm -rf /var/lib/apt/lists/* && \
     pip install -r /tmp/requirements.txt && \
     rm -rf /tmp && \
     adduser \
@@ -21,8 +23,10 @@ RUN apt-get update && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
     chown -R django-user:django-user /vol && \
+    chown -R django-user:django-user /app && \
     chmod -R 755 /vol && \
-    chmod -R +x /scripts
+    chmod -R +x /scripts && \
+    chmod -R 777 /app
 
 ENV PATH="/scripts:$PATH"
 
