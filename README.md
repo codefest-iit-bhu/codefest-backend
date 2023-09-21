@@ -9,7 +9,6 @@ Frontend is build using Vue.Js Framework.
 
 
 #### Setup
-1. Create .env file. Ask tech team for the complete config.
+1. Create `.env` file. Use `.env.example` for template.
 2. Run `python create_service_account_json.py` to create service_account.json file.
 3. Follow usual steps to run the django application.
-

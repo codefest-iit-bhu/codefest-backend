@@ -37,7 +37,13 @@ if DEBUG:
 else:
     SECRET_KEY = os.getenv("SECRET_KEY", '')
 
-ALLOWED_HOSTS = ["codefest-api.herokuapp.com", "127.0.0.1"]
+ALLOWED_HOSTS = ["codefest-api.iitbhu.tech", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS.extend(
+    filter(
+        None,
+        os.environ.get('ALLOWED_HOSTS', '').split(','),
+    )
+)
 
 
 # Application definition
@@ -100,7 +106,6 @@ DATABASES = {
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
-DATABASES["default"].update(dj_database_url.config(conn_max_age=0))
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -149,9 +154,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = '/static/static/'
+MEDIA_URL = '/static/media/'
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, "service_account.json"))
 default_app = firebase_admin.initialize_app(cred)
