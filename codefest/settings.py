@@ -160,19 +160,6 @@ MEDIA_URL = '/static/media/'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
-
-# if not DEBUG:
-#     with open("service_account.json.aes", "rb") as encrypted_file:
-#         with open("service_account.json", "wb") as decrypted_file:
-#             # decrypt file stream
-#             pyAesCrypt.decryptStream(
-#                 encrypted_file,
-#                 decrypted_file,
-#                 os.getenv("SERVICE_ACCOUNT_DECRYPT_KEY", ""),
-#                 64 * 1024,
-#                 int(os.getenv("SERVICE_ACCOUNT_ENC_SIZE", "")),
-#             )
-
 cred = credentials.Certificate(os.path.join(BASE_DIR, "service_account.json"))
 default_app = firebase_admin.initialize_app(cred)
 
