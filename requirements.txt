@@ -13,14 +13,14 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==3.4.6
 dj-database-url==0.5.0
-Django==2.2.0
+Django==2.2.17
 django-cors-headers==2.5.2
 django-rest-framework==0.1.0
 django-storages==1.7.1
 djangorestframework==3.9.0
 drf-yasg==1.12.1
 firebase-admin==2.16.0
-gevent==1.4.0
+gevent==23.7.0
 google-api-core==1.8.0
 google-auth==1.6.3
 google-cloud-core==0.29.1
@@ -28,8 +28,8 @@ google-cloud-firestore==0.31.0
 google-cloud-storage==1.14.0
 google-resumable-media==0.3.2
 googleapis-common-protos==1.5.8
-greenlet==0.4.15
-grpcio>=1.20.0
+greenlet==2.0.0
+grpcio==1.58.0
 gunicorn==19.9.0
 hashids==1.2.0
 idna==2.8
@@ -54,7 +54,7 @@ python-dotenv==0.20.0
 pytz==2018.9
 requests==2.21.0
 rsa==4.0
-ruamel.yaml==0.15.83
+ruamel.yaml==0.17.32
 six==1.12.0
 typed-ast>=1.4.1
 uritemplate==3.0.0
