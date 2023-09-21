@@ -345,3 +345,5 @@ $RECYCLE.BIN/
 script.py
 crypt.py
 service_account.json
+
+.idea/*
