@@ -100,12 +100,27 @@ WSGI_APPLICATION = "codefest.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+if "DATABASE_HOST" in os.environ:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ["DATABASE_NAME"],
+            "USER": os.environ["DATABASE_USER"],
+            "PASSWORD": os.environ["DATABASE_PASSWORD"],
+            "HOST": os.environ["DATABASE_HOST"],
+            "PORT": os.environ["DATABASE_PORT"],
+            "OPTIONS": {
+                "charset": "utf8mb4",
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
