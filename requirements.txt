@@ -20,7 +20,7 @@ django-storages==1.7.1
 djangorestframework==3.9.0
 drf-yasg==1.12.1
 firebase-admin==2.16.0
-# gevent==23.7.0
+gevent==23.7.0
 google-api-core==1.8.0
 google-auth==1.6.3
 google-cloud-core==0.29.1
