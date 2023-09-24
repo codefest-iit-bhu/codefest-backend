@@ -37,7 +37,7 @@ if DEBUG:
 else:
     SECRET_KEY = os.getenv("SECRET_KEY", '')
 
-ALLOWED_HOSTS = ["codefest-api.iitbhu.tech", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["codefest-api.iitbhu.tech", "api-codefest.iitbhu.tech", "127.0.0.1", "localhost"]
 ALLOWED_HOSTS.extend(
     filter(
         None,
@@ -210,21 +210,43 @@ SWAGGER_SETTINGS = {
     }
 }
 
+# Configure Logger
+
+LOG_DIR = (
+    os.environ["LOG_DIR"] if "LOG_DIR" in os.environ else os.path.join(BASE_DIR, "logs")
+)
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+LOG_FILE_PATH = os.path.join(LOG_DIR, "codefest.log")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": """[%(levelname)s] [%(asctime)s] [fn: %(module)s.%(funcName)s-%(lineno)d] %(message)s"""
+        },
+    },
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "backupCount": 5,
+            "when": "W0",
+            "interval": 1,
+            "filename": LOG_FILE_PATH,
+            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["console"],
-            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
+
 CELERY_TASK_SERIALIZER = "json"
 CELERY_BROKER_URL = "amqp://localhost"
 if not DEBUG:
