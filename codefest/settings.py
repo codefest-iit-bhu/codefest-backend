@@ -263,3 +263,18 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+# Configure SMTP Email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = (
+    os.environ["EMAIL_HOST_USER"] if "EMAIL_HOST_USER" in os.environ else "email"
+)
+EMAIL_HOST_PASSWORD = (
+    os.environ["EMAIL_HOST_PASSWORD"]
+    if "EMAIL_HOST_PASSWORD" in os.environ
+    else "password"
+)
