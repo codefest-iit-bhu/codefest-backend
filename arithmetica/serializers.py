@@ -14,8 +14,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ["id", "user_id", "credits", "lives", "name"]
         read_only_fields = ["user_id", "name"]
 
-    def get_name(self, obj):
-        return obj.user.profile.name
+   
 
 
 class RoundInfoSerializer(serializers.ModelSerializer):

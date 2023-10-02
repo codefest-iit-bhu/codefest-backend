@@ -86,7 +86,6 @@ class ErrorInfoCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         round_number = self.request.data.get("round_number")
         round = RoundInfo.objects.filter(round_number=round_number)
-        print(round.exists())
         if not round.exists():
             raise ParseError(detail="Round does not exist")
 
