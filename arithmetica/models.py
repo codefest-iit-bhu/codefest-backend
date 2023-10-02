@@ -18,7 +18,9 @@ class RoundInfo(models.Model):
     start_time=models.DateTimeField()
     end_time=models.DateTimeField()
     problem_statement=models.TextField()
-
+    round_number=models.IntegerField(unique=True,validators=[
+            MinValueValidator(1)
+        ])
     def __str__(self):
         return f"{self.problem_statement[:50]} with id {self.id}"
 
