@@ -20,8 +20,8 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class RoundInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoundInfo
-        fields = ["id", "start_time", "end_time", "round_number", "problem_statement"]
-
+        fields = ["id", "start_time", "end_time", "round_number","training_points" ,"problem_statement"]
+        read_only_fields=["training_points"]
     def validate(self, data):
         """
         Check that the start is before the stop.
