@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
-from .models import *
-from website.serializers import ProfileSerializer
+
 from website.models import Profile
+from website.serializers import ProfileSerializer
+
+from .models import *
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
