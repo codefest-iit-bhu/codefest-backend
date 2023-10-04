@@ -16,8 +16,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ["id", "user_id", "credits", "lives", "name"]
         read_only_fields = ["user_id", "name"]
 
-   
-
 
 class RoundInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +29,21 @@ class RoundInfoSerializer(serializers.ModelSerializer):
         if data["start_time"] > data["end_time"]:
             raise serializers.ValidationError("finish must occur after start")
         return data
+
+class RoundInfoPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoundInfo
+        fields = ["id", "start_time", "end_time", "round_number","training_points" ,"problem_statement"]
+
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)
+        super(RoundInfoPublicSerializer, self).__init__(*args, **kwargs)
+
+        if fields:
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
 
 class ErrorInfoSerializer(serializers.ModelSerializer):

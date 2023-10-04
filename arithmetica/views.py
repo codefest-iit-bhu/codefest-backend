@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 from .models import *
 from .serializers import *
@@ -125,22 +126,33 @@ class RoundInfoPublicView(generics.GenericAPIView):
         authentication.TokenAuthentication,
         authentication.SessionAuthentication,
     ]
-    serializer_class=RoundInfoSerializer
-    
+
+    def get_serializer_class(self):
+        fields = None
+        if not self.kwargs.get("round_number"):
+            fields = ['id', 'round_number', 'start_time', 'end_time']
+
+        return lambda *args, **kwargs: RoundInfoPublicSerializer(*args, fields=fields, **kwargs)
+
+
     def get_queryset(self,request,*args,**kwargs):
-        round_number=self.kwargs.get("round_number")
-        round=RoundInfo.objects.filter(round_number=round_number)
-        if not round.exists():
-            raise ParseError(detail="Round does not exist")
-        return round.first()
+        round_number = self.kwargs.get("round_number")
+        if round_number:
+            round_info = get_object_or_404(RoundInfo, round_number=round_number)
+            return round_info
+        else:
+            return RoundInfo.objects.all()
 
 
     def get(self,request,*args,**kwargs):
-        round=self.get_queryset(request)
-        if round.start_time>now(): 
-            raise PermissionDenied(
-                detail=f"You can only view this round from {round.start_time}"
-            )
-        serializer=self.serializer_class
-        return Response(serializer(round).data)
+        round_info = self.get_queryset(request)
+        serializer_class = self.get_serializer_class()
 
+        serializer = serializer_class(round_info, many=not isinstance(round_info, RoundInfo))
+
+        if isinstance(round_info, RoundInfo) and round_info.start_time > now():
+            raise PermissionDenied(
+                detail=f"You can only view this round from {round_info.start_time}"
+            )
+
+        return Response(serializer.data)

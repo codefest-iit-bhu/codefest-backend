@@ -7,6 +7,7 @@ urlpatterns = [
     path("user-info/<int:pk>/",UserInfoRetriveUpdateDestroyView.as_view() ),
     path("round-info/create/", RoundInfoCreateView.as_view()),
     path("round-info/<int:round_number>/",RoundInfoRetriveUpdateDestroyView.as_view() ),
+    path('round-info/public/', RoundInfoPublicView.as_view(), name='round-info-list-create'),
     path("round-info/public/<int:round_number>/",RoundInfoPublicView.as_view() ),
     path("error-info/create/", ErrorInfoCreateView.as_view()),
     path("error-info/<int:round>/",ErrorInfoRetriveUpdateDestroyView.as_view() ),
