@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from .models import *
 from .serializers import *
-
+from django.utils.timezone import now
 
 # Create your views here.
 class UserInfoCreateView(generics.CreateAPIView):
@@ -41,7 +41,7 @@ class UserInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         if self.get_queryset().first().user != self.request.user:
             raise PermissionDenied(
-                detail="You are not slloed to update other users info"
+                detail="You are not allowed to update other users info"
             )
         serializer.save(user=self.request.user)
         return serializer.validated_data
@@ -118,3 +118,29 @@ class ErrorInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return serializer.validated_data
+
+class RoundInfoPublicView(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
+    serializer_class=RoundInfoSerializer
+    
+    def get_queryset(self,request,*args,**kwargs):
+        round_number=self.kwargs.get("round_number")
+        round=RoundInfo.objects.filter(round_number=round_number)
+        if not round.exists():
+            raise ParseError(detail="Round does not exist")
+        return round.first()
+
+
+    def get(self,request,*args,**kwargs):
+        round=self.get_queryset(request)
+        if round.start_time>now(): 
+            raise PermissionDenied(
+                detail=f"You can only view this round from {round.start_time}"
+            )
+        serializer=self.serializer_class
+        return Response(serializer(round).data)
+
