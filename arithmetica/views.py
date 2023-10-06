@@ -174,30 +174,39 @@ class RoundInfoPublicView(generics.GenericAPIView):
 
 class CalculateErrorView(generics.CreateAPIView):
     serializer_class = LatexExpressionSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
 
     def get_required_data(self, request):
-        latex_expression = request.data.get('latex_expression')
-        round_id = request.data.get('round_id')
-        user_info = get_object_or_404(UserInfo, user=request.user)
+            latex_expression = request.data.get('latex_expression')
+            round_id = request.data.get('round_id')
+            user_info = get_object_or_404(UserInfo, user=request.user)
+            state = request.data.get('state')
 
-        if not latex_expression or not round_id:
-            raise ValueError("Missing data.")
+            if not latex_expression or not round_id:
+                raise ValueError("Missing data.")
 
-        return latex_expression, round_id, user_info
+            return latex_expression, round_id, user_info, state
 
-    def get_round_info(self, round_id):
+    def get_round_info(self, round_id, state):
         try:
             round_info = RoundInfo.objects.get(id=round_id)
-            testing_points = ast.literal_eval(round_info.testing_points)
-            return round_info, testing_points
+            if state == 'train':
+                points = ast.literal_eval(round_info.training_points)
+            else:
+                points = ast.literal_eval(round_info.testing_points)
+            return round_info, points
         except RoundInfo.DoesNotExist:
             raise ValueError("Round not found.")
         except SyntaxError:
             raise ValueError("Testing points format is incorrect.")
 
-    def calculate_error(self, latex_expression, testing_points):
+    def calculate_error(self, latex_expression, points):
         error_sum = 0
-        for point in testing_points:
+        for point in points:
             x, expected_y = point
             obj = ExpressionEvaluator()
             formatted_latex = obj.remove_format_keywords(latex_expression)
@@ -207,29 +216,35 @@ class CalculateErrorView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            latex_expression, round_id, user_info = self.get_required_data(request)
-            round_info, testing_points = self.get_round_info(round_id)
-            error_sum = self.calculate_error(latex_expression, testing_points)
+            latex_expression, round_id, user_info, state = self.get_required_data(request)
+            round_info, points = self.get_round_info(round_id, state)
+            error_sum = self.calculate_error(latex_expression, points)
 
-            ErrorInfo.objects.create(
-                user_info=user_info,
-                round=round_info,
-                error=error_sum,
-                submitted_function=latex_expression
-            )
-
-            data = {"message": "Backend testing started!"}
-            return Response(data, status=status.HTTP_201_CREATED)
+            if state == 'test':
+                ErrorInfo.objects.create(
+                    user_info=user_info,
+                    round=round_info,
+                    error=error_sum,
+                    submitted_function=latex_expression
+                )
+                data = {"message": "Backend testing started!"}
+                return Response(data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"error": str(error_sum)}, status=status.HTTP_200_OK)
 
         except ValueError as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"message": "Error while testing!", "detail": str(e)},
+            return Response({"message": "Error while calculating!", "detail": str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DeductCreditsView(APIView):
     permission_classes = (IsAdminUser,)
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
 
     def post(self, request, *args, **kwargs):
         round_id = request.data.get('round_id')
