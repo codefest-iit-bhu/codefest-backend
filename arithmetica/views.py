@@ -41,7 +41,18 @@ class UserInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "pk"
 
     def get_queryset(self):
-        return UserInfo.objects.filter(id=self.kwargs.get("pk"))
+        pk = self.kwargs.get("pk")
+        if pk:
+            return UserInfo.objects.filter(id=pk)
+        return UserInfo.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        if pk:
+            return self.retrieve(request, *args, **kwargs)
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_update(self, serializer):
         if self.get_queryset().first().user != self.request.user:
@@ -221,10 +232,19 @@ class DeductCreditsView(APIView):
     permission_classes = (IsAdminUser,)
 
     def post(self, request, *args, **kwargs):
-        errors = ErrorInfo.objects.all().values_list('user_info_id', 'error')
+        round_id = request.data.get('round_id')
+        if not round_id:
+            return Response({"detail": "round_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            round_info = RoundInfo.objects.get(id=round_id)
+        except RoundInfo.DoesNotExist:
+            return Response({"detail": "Round not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        errors = ErrorInfo.objects.filter(round=round_info).values_list('user_info_id', 'error')
 
         if not errors.exists():
-            return Response({"detail": "No errors found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": f"No errors found for round {round_id}."}, status=status.HTTP_404_NOT_FOUND)
 
         min_error = min(errors, key=lambda x: x[1])[1]
         max_error = max(errors, key=lambda x: x[1])[1]

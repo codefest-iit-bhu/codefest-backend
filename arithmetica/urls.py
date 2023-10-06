@@ -1,10 +1,10 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from .views import *
 
 urlpatterns = [
     path("user-info/create/", UserInfoCreateView.as_view()),
-    path("user-info/<int:pk>/",UserInfoRetriveUpdateDestroyView.as_view() ),
+    re_path(r'^user-info/(?P<pk>\d+)?/?$', UserInfoRetriveUpdateDestroyView.as_view(), name='userinfo-detail'),
     path("round-info/create/", RoundInfoCreateView.as_view()),
     path("round-info/<int:round_number>/",RoundInfoRetriveUpdateDestroyView.as_view() ),
     path('round-info/public/', RoundInfoPublicView.as_view(), name='round-info-list-create'),
