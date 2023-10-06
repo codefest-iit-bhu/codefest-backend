@@ -194,10 +194,10 @@ class CalculateErrorView(generics.CreateAPIView):
     def get_round_info(self, round_id, state):
         try:
             round_info = RoundInfo.objects.get(id=round_id)
-            if state == 'train':
-                points = ast.literal_eval(round_info.training_points)
-            else:
+            if state == 'test':
                 points = ast.literal_eval(round_info.testing_points)
+            else:
+                points = ast.literal_eval(round_info.training_points)
             return round_info, points
         except RoundInfo.DoesNotExist:
             raise ValueError("Round not found.")
