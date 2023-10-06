@@ -13,6 +13,7 @@ import ast
 from .models import *
 from .serializers import *
 from django.utils.timezone import now
+import math
 
 
 # Create your views here.
@@ -214,3 +215,29 @@ class CalculateErrorView(generics.CreateAPIView):
         except Exception as e:
             return Response({"message": "Error while testing!", "detail": str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DeductCreditsView(APIView):
+    permission_classes = (IsAdminUser,)
+
+    def post(self, request, *args, **kwargs):
+        errors = ErrorInfo.objects.all().values_list('user_info_id', 'error')
+
+        if not errors.exists():
+            return Response({"detail": "No errors found."}, status=status.HTTP_404_NOT_FOUND)
+
+        min_error = min(errors, key=lambda x: x[1])[1]
+        max_error = max(errors, key=lambda x: x[1])[1]
+
+        for user_info_id, error in errors:
+            normalized_error = (error - min_error) / (
+                    max_error - min_error + 1e-5)
+            log_error = math.log(normalized_error + 1)
+
+            deduction = log_error * 10
+
+            user_info = UserInfo.objects.get(id=user_info_id)
+            user_info.credits = max(0, user_info.credits - deduction)
+            user_info.save()
+
+        return Response({"detail": "Credits updated based on errors."}, status=status.HTTP_200_OK)
