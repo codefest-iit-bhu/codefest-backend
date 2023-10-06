@@ -5,6 +5,8 @@ from website.models import Profile
 from website.serializers import ProfileSerializer
 
 from .models import *
+import sympy as sp
+
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -63,3 +65,24 @@ class ErrorInfoSerializer(serializers.ModelSerializer):
 
     def get_user_info(self, obj):
         return UserInfoSerializer(obj.user_info).data
+
+
+class LatexExpressionSerializer(serializers.Serializer):
+    latex_expression = serializers.CharField()
+    round_id = serializers.IntegerField()
+
+    def validate_round_id(self, value):
+        try:
+            round_info = RoundInfo.objects.get(id=value)
+        except RoundInfo.DoesNotExist:
+            raise serializers.ValidationError("Round not found.")
+
+        return value
+
+    def validate_latex_expression(self, value):
+        try:
+            parsed_expr = sp.sympify(value)
+        except Exception as e:
+            raise serializers.ValidationError(f"Invalid latex expression: {e}")
+
+        return value

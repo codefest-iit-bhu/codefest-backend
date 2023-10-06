@@ -1,16 +1,19 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from rest_framework import authentication, generics
+from rest_framework import authentication, generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from .services.eval_expr import ExpressionEvaluator
+import ast
 
 from .models import *
 from .serializers import *
 from django.utils.timezone import now
+
 
 # Create your views here.
 class UserInfoCreateView(generics.CreateAPIView):
@@ -120,6 +123,7 @@ class ErrorInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
         return serializer.validated_data
 
+
 class RoundInfoPublicView(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = [
@@ -134,8 +138,7 @@ class RoundInfoPublicView(generics.GenericAPIView):
 
         return lambda *args, **kwargs: RoundInfoPublicSerializer(*args, fields=fields, **kwargs)
 
-
-    def get_queryset(self,request,*args,**kwargs):
+    def get_queryset(self, request, *args, **kwargs):
         round_number = self.kwargs.get("round_number")
         if round_number:
             round_info = get_object_or_404(RoundInfo, round_number=round_number)
@@ -143,8 +146,7 @@ class RoundInfoPublicView(generics.GenericAPIView):
         else:
             return RoundInfo.objects.all()
 
-
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         round_info = self.get_queryset(request)
         serializer_class = self.get_serializer_class()
 
@@ -156,3 +158,59 @@ class RoundInfoPublicView(generics.GenericAPIView):
             )
 
         return Response(serializer.data)
+
+
+class CalculateErrorView(generics.CreateAPIView):
+    serializer_class = LatexExpressionSerializer
+
+    def get_required_data(self, request):
+        latex_expression = request.data.get('latex_expression')
+        round_id = request.data.get('round_id')
+        user_info = get_object_or_404(UserInfo, user=request.user)
+
+        if not latex_expression or not round_id:
+            raise ValueError("Missing data.")
+
+        return latex_expression, round_id, user_info
+
+    def get_round_info(self, round_id):
+        try:
+            round_info = RoundInfo.objects.get(id=round_id)
+            testing_points = ast.literal_eval(round_info.testing_points)
+            return round_info, testing_points
+        except RoundInfo.DoesNotExist:
+            raise ValueError("Round not found.")
+        except SyntaxError:
+            raise ValueError("Testing points format is incorrect.")
+
+    def calculate_error(self, latex_expression, testing_points):
+        error_sum = 0
+        for point in testing_points:
+            x, expected_y = point
+            obj = ExpressionEvaluator()
+            formatted_latex = obj.remove_format_keywords(latex_expression)
+            calculated_y = ExpressionEvaluator().evaluate_latex(formatted_latex, x)
+            error_sum += abs(expected_y - calculated_y)
+        return error_sum
+
+    def create(self, request, *args, **kwargs):
+        try:
+            latex_expression, round_id, user_info = self.get_required_data(request)
+            round_info, testing_points = self.get_round_info(round_id)
+            error_sum = self.calculate_error(latex_expression, testing_points)
+
+            ErrorInfo.objects.create(
+                user_info=user_info,
+                round=round_info,
+                error=error_sum,
+                submitted_function=latex_expression
+            )
+
+            data = {"message": "Backend testing started!"}
+            return Response(data, status=status.HTTP_201_CREATED)
+
+        except ValueError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"message": "Error while testing!", "detail": str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

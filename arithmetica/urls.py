@@ -11,4 +11,5 @@ urlpatterns = [
     path("round-info/public/<int:round_number>/",RoundInfoPublicView.as_view() ),
     path("error-info/create/", ErrorInfoCreateView.as_view()),
     path("error-info/<int:round>/",ErrorInfoRetriveUpdateDestroyView.as_view() ),
+    path('calculate_error/', CalculateErrorView.as_view(), name="calculate_error"),
 ]
