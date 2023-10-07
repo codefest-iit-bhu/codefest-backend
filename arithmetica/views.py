@@ -62,6 +62,7 @@ class UserInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save(user=self.request.user)
         return serializer.validated_data
 
+
 class RoundInfoCreateView(generics.CreateAPIView):
     http_method_names = ["post"]
     serializer_class = RoundInfoSerializer

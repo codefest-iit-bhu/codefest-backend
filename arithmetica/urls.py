@@ -13,5 +13,4 @@ urlpatterns = [
     path("error-info/<int:round>/",ErrorInfoRetriveUpdateDestroyView.as_view() ),
     path('calculate_error/', CalculateErrorView.as_view(), name="calculate_error"),
     path('calculate_credits/', DeductCreditsView.as_view(), name="calculate_credits"),
-    path('user-info/public', UserInfoPublicView.as_view()),
 ]
