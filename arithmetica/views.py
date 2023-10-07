@@ -276,3 +276,22 @@ class DeductCreditsView(APIView):
             user_info.save()
 
         return Response({"detail": "Credits updated based on errors."}, status=status.HTTP_200_OK)
+
+class LatexToSimpleExpressionView(APIView):
+    serializer_class = LatexSerializer
+    permission_classes = (IsAdminUser,)
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        serializer = LatexSerializer(data=request.data)
+        if serializer.is_valid():
+            latex_expr = serializer.validated_data['latex_expr']
+            try:
+                simple_expr = ExpressionEvaluator().get_parsed_expr(latex_expr)
+                return Response({"simple_expr": str(simple_expr)}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

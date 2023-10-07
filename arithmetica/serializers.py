@@ -86,3 +86,6 @@ class LatexExpressionSerializer(serializers.Serializer):
             raise serializers.ValidationError(f"Invalid latex expression: {e}")
 
         return value
+
+class LatexSerializer(serializers.Serializer):
+    latex_expr = serializers.CharField(required=True)

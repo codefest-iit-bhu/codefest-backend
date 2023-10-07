@@ -4,12 +4,12 @@ import math
 from sympy.parsing.latex import parse_latex
 from sympy.parsing.sympy_parser import parse_expr
 from rest_framework.exceptions import ParseError
+
+
 class ExpressionEvaluator:
-    @staticmethod
-    def evaluate_latex(latex_expr, x_val):
-        
+    def evaluate_latex(self,latex_expr, x_val):
         CONSTANTS = {
-            'e' : math.e,
+            'e': math.e,
             'pi': math.pi,
         }
 
@@ -17,22 +17,15 @@ class ExpressionEvaluator:
             'sin': math.sin,
             'cos': math.cos,
             'tan': math.tan,
-            'arcsin': math.asin,
-            'arccos': math.acos,
-            'arctan': math.atan,
-            'sinh': math.sinh,
-            'cosh': math.cosh,
-            'tanh': math.tanh,
             'exp': math.exp,
             'sqrt': math.sqrt,
             'ln': math.log,
             'log': lambda x, b=10: math.log(x, b),
             'abs': abs,
-            'factorial': math.factorial
         }
 
         try:
-            expr = parse_expr(str(parse_latex(latex_expr)), local_dict = CONSTANTS, transformations='all')
+            expr = self.get_parsed_expr(latex_expr)
         except Exception as e:
             raise ParseError('Malformed Expression')
 
@@ -47,7 +40,8 @@ class ExpressionEvaluator:
 
         try:
             return float(
-                parse_expr(str(expr), local_dict = {**CONSTANTS, **FUNCTIONS, "x": x_val}, transformations='all', evaluate=True)
+                parse_expr(str(expr), local_dict={**CONSTANTS, **FUNCTIONS, "x": x_val}, transformations='all',
+                           evaluate=True)
             )
         except Exception as e:
             return ParseError('Malformed Expression')
@@ -60,3 +54,12 @@ class ExpressionEvaluator:
             latex_str = re.sub(keyword, '', latex_str)
 
         return latex_str
+
+    def get_parsed_expr(self,latex_expr):
+        CONSTANTS = {
+            'e': math.e,
+            'pi': math.pi,
+        }
+
+        expr = parse_expr(str(parse_latex(latex_expr)), local_dict=CONSTANTS, transformations='all')
+        return expr

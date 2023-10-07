@@ -4,7 +4,7 @@ from django.db import models
 
 
 class UserInfo(models.Model):
-    user=models.OneToOneField(to=User,on_delete=models.CASCADE)
+    user=models.OneToOneField(to=User,on_delete=models.CASCADE, primary_key=True)
     credits=models.FloatField(default=30.0,validators=[
             MinValueValidator(0)
         ])
