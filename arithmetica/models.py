@@ -4,15 +4,17 @@ from django.db import models
 
 
 class UserInfo(models.Model):
-    user=models.OneToOneField(to=User,on_delete=models.CASCADE, primary_key=True)
-    credits=models.FloatField(default=30.0,validators=[
-            MinValueValidator(0)
-        ])
-    lives=models.IntegerField(default=3,validators=[
-            MinValueValidator(0)])
+    id = models.IntegerField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    credits = models.FloatField(default=30.0, validators=[MinValueValidator(0)])
+    lives = models.IntegerField(default=3, validators=[MinValueValidator(0)])
 
     def __str__(self):
-        return f"{self.user} with id {self.user.id}"
+        return f"{self.user} with id {self.id}"
+
+    def save(self, *args, **kwargs):
+        self.id = self.user.id
+        super().save(*args, **kwargs)
 
 class RoundInfo(models.Model):
     start_time=models.DateTimeField()
