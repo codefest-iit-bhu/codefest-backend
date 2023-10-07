@@ -61,25 +61,6 @@ class UserInfoRetriveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             )
         serializer.save(user=self.request.user)
         return serializer.validated_data
-    
-class UserInfoPublicView(generics.GenericAPIView):
-    http_method_names = ['get']
-    serializer_class = UserInfoPublicSerializer
-    permission_classes = (AllowAny,)
-    authentication_classes = [
-        authentication.TokenAuthentication,
-        authentication.SessionAuthentication,
-    ]
-
-    def get_queryset(self):
-        return UserInfo.objects.all()
-    
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
 
 class RoundInfoCreateView(generics.CreateAPIView):
     http_method_names = ["post"]

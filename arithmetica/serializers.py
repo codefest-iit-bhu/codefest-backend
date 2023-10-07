@@ -18,15 +18,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ["id", "user_id", "credits", "lives", "name"]
         read_only_fields = ["user_id", "name"]
 
-class UserInfoPublicSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="user.profile.name", required=False)
-    user_id = serializers.PrimaryKeyRelatedField(source="user.id", read_only=True)
-
-    class Meta:
-        model = UserInfo
-        fields = ["id", "user_id", "credits", "lives", "name"]
-        read_only_fields = ["user_id", "name"]
-
 class RoundInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoundInfo
