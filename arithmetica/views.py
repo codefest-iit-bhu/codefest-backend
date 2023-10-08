@@ -164,10 +164,10 @@ class RoundInfoPublicView(generics.GenericAPIView):
 
         serializer = serializer_class(round_info, many=not isinstance(round_info, RoundInfo))
 
-        if isinstance(round_info, RoundInfo) and round_info.start_time > now():
-            raise PermissionDenied(
-                detail=f"You can only view this round from {round_info.start_time}"
-            )
+        # if isinstance(round_info, RoundInfo) and round_info.start_time > now():
+        #     raise PermissionDenied(
+        #         detail=f"You can only view this round from {round_info.start_time}"
+        #     )
 
         return Response(serializer.data)
 
