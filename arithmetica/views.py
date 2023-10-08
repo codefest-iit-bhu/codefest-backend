@@ -221,7 +221,7 @@ class CalculateErrorView(generics.CreateAPIView):
             round_info, points = self.get_round_info(round_id, state)
             error_sum = self.calculate_error(latex_expression, ast.literal_eval(points))
 
-            if state == 'test' and round_id > 1:
+            if state == 'test' and int(round_id) > 1:
                 ErrorInfo.objects.create(
                     user_info=user_info,
                     round=round_info,
