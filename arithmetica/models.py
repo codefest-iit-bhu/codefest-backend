@@ -35,6 +35,9 @@ class ErrorInfo(models.Model):
             MinValueValidator(0)
         ])
     submitted_function=models.TextField()
+    bidding_amount = models.FloatField(default=0,validators=[
+            MinValueValidator(0)
+        ])
     created=models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
     credits=models.FloatField(default=30.0,validators=[

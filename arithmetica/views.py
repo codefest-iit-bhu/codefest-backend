@@ -145,15 +145,15 @@ class RoundInfoPublicView(generics.GenericAPIView):
 
     def get_serializer_class(self):
         fields = None
-        if not self.kwargs.get("round_number"):
-            fields = ['id', 'round_number', 'start_time', 'end_time']
+        if not self.kwargs.get("round_id"):
+            fields = ['id', 'round_number', 'start_time', 'end_time','training_points', 'problem_statement']
 
         return lambda *args, **kwargs: RoundInfoPublicSerializer(*args, fields=fields, **kwargs)
 
     def get_queryset(self, request, *args, **kwargs):
-        round_number = self.kwargs.get("round_number")
-        if round_number:
-            round_info = get_object_or_404(RoundInfo, round_number=round_number)
+        round_id = self.kwargs.get("round_id")
+        if round_id:
+            round_info = get_object_or_404(RoundInfo, id=round_id)
             return round_info
         else:
             return RoundInfo.objects.all()
@@ -183,13 +183,14 @@ class CalculateErrorView(generics.CreateAPIView):
     def get_required_data(self, request):
             latex_expression = request.data.get('latex_expression')
             round_id = request.data.get('round_id')
+            bidding_amount = request.data.get('bidding_amount')
             user_info = get_object_or_404(UserInfo, user=request.user)
             state = request.data.get('state')
 
             if not latex_expression or not round_id:
                 raise ValueError("Missing data.")
 
-            return latex_expression, round_id, user_info, state
+            return latex_expression, round_id, user_info, state, bidding_amount
 
     def get_round_info(self, round_id, state):
         try:
@@ -216,16 +217,17 @@ class CalculateErrorView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            latex_expression, round_id, user_info, state = self.get_required_data(request)
+            latex_expression, round_id, user_info, state, bidding_amount = self.get_required_data(request)
             round_info, points = self.get_round_info(round_id, state)
-            error_sum = self.calculate_error(latex_expression, points)
+            error_sum = self.calculate_error(latex_expression, ast.literal_eval(points))
 
             if state == 'test':
                 ErrorInfo.objects.create(
                     user_info=user_info,
                     round=round_info,
                     error=error_sum,
-                    submitted_function=latex_expression
+                    submitted_function=latex_expression,
+                    bidding_amount=bidding_amount,
                 )
                 data = {"message": "Backend testing started!"}
                 return Response(data, status=status.HTTP_201_CREATED)
@@ -256,7 +258,7 @@ class DeductCreditsView(APIView):
         except RoundInfo.DoesNotExist:
             return Response({"detail": "Round not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        errors = ErrorInfo.objects.filter(round=round_info).values_list('user_info_id', 'error')
+        errors = ErrorInfo.objects.filter(round=round_info).values_list('user_info_id', 'error','bidding_amount')
 
         if not errors.exists():
             return Response({"detail": f"No errors found for round {round_id}."}, status=status.HTTP_404_NOT_FOUND)
@@ -264,12 +266,12 @@ class DeductCreditsView(APIView):
         min_error = min(errors, key=lambda x: x[1])[1]
         max_error = max(errors, key=lambda x: x[1])[1]
 
-        for user_info_id, error in errors:
+        for user_info_id, error,bidding_amount in errors:
             normalized_error = (error - min_error) / (
                     max_error - min_error + 1e-5)
             log_error = math.log(normalized_error + 1)
 
-            deduction = log_error * 10
+            deduction = log_error * bidding_amount
 
             user_info = UserInfo.objects.get(id=user_info_id)
             user_info.credits = max(0, user_info.credits - deduction)

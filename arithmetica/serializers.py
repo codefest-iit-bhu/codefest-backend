@@ -10,7 +10,7 @@ import sympy as sp
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="user.profile.name", required=False)
+    name = serializers.CharField(source="user.username", required=False)
     user_id = serializers.PrimaryKeyRelatedField(source="user.id", read_only=True)
 
     class Meta:
@@ -70,6 +70,7 @@ class ErrorInfoSerializer(serializers.ModelSerializer):
 class LatexExpressionSerializer(serializers.Serializer):
     latex_expression = serializers.CharField()
     round_id = serializers.IntegerField()
+    bidding_amount = serializers.IntegerField()
 
     def validate_round_id(self, value):
         try:
