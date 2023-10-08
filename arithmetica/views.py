@@ -280,7 +280,7 @@ class DeductCreditsView(APIView):
 
 class LatexToSimpleExpressionView(APIView):
     serializer_class = LatexSerializer
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsAuthenticated,)
     authentication_classes = [
         authentication.TokenAuthentication,
         authentication.SessionAuthentication,
