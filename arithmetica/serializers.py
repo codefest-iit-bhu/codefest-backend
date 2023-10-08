@@ -10,13 +10,16 @@ import sympy as sp
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="user.username", required=False)
+    name = serializers.SerializerMethodField(required=False)
     user_id = serializers.PrimaryKeyRelatedField(source="user.id", read_only=True)
 
     class Meta:
         model = UserInfo
         fields = ["id", "user_id", "credits", "lives", "name"]
         read_only_fields = ["user_id", "name"]
+    
+    def get_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
 
 
 class RoundInfoSerializer(serializers.ModelSerializer):
