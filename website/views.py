@@ -170,10 +170,18 @@ class HandlesView(generics.RetrieveUpdateAPIView):
 class LeaderBoardView(generics.ListAPIView):
     permission_classes = []
     authentication_classes = []
-    queryset = Profile.objects.exclude(referral_count=0).order_by("-referral_count")[
-        :10
-    ]
     serializer_class = LeaderBoardSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        is_campus_ambassador = user.profile.is_campus_ambassador
+
+        if is_campus_ambassador:
+            return Profile.objects.filter(is_campus_ambassador=True).exclude(referral_count=0).order_by(
+                "-referral_count")[:10]
+        else:
+            return Profile.objects.filter(is_campus_ambassador=False).exclude(referral_count=0).order_by(
+                "-referral_count")[:10]
 
 
 @parser_classes([MultiPartParser])

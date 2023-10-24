@@ -101,6 +101,7 @@ class Profile(models.Model):
     is_profile_complete = models.BooleanField(default=False)
     referral_count = models.IntegerField(default=0)
     fcm_token = models.CharField(max_length=255, null=True, blank=True)
+    is_campus_ambassador = models.BooleanField(default=False)
 
     # @cached_property
     # def name(self):

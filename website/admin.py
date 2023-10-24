@@ -48,7 +48,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "institute_type",
         "user__account__is_verified",
     )
-    readonly_fields = ("user", "referred_by")
+    readonly_fields = ("referred_by",)
     radio_fields = {"gender": admin.HORIZONTAL}
     fieldsets = (
         (
