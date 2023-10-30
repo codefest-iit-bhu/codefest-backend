@@ -69,6 +69,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "referral_count",
             "provider",
             "is_verified",
+            "is_campus_ambassador"
         )
 
     @swagger_serializer_method(serializer_or_field=serializers.CharField)
