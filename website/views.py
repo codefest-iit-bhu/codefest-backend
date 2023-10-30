@@ -168,8 +168,11 @@ class HandlesView(generics.RetrieveUpdateAPIView):
 
 
 class LeaderBoardView(generics.ListAPIView):
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.SessionAuthentication
+]
     serializer_class = LeaderBoardSerializer
 
     def get_queryset(self):
