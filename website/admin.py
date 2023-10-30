@@ -83,6 +83,7 @@ class ProfileAdmin(admin.ModelAdmin):
                     "study_year",
                     "branch",
                     "degree",
+                    "is_campus_ambassador",
                 ),
             },
         ),
