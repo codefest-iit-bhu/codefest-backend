@@ -41,6 +41,7 @@ class LoginView(generics.GenericAPIView):
                 "user_id": self.user.pk,
                 "token": self.token,
                 "verification_status": self.verification_status,
+                "is_campus_ambassador": self.user.profile.is_campus_ambassador,
                 "is_profile_complete": self.is_profile_complete,
             }
         )
@@ -73,6 +74,7 @@ class RegisterView(generics.GenericAPIView):
         response = RegisterResponseSerializer(
             {
                 "user_id": self.user.pk,
+                "is_campus_ambassador": self.user.profile.is_campus_ambassador,
                 "token": self.token,
                 "verification_status": self.user.verified_account.is_verified,
             }

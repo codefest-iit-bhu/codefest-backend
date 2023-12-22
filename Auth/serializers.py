@@ -144,6 +144,7 @@ class RegisterResponseSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     token = serializers.CharField(max_length=500)
     verification_status = serializers.BooleanField()
+    is_campus_ambassador = serializers.BooleanField()
 
 
 class LoginResponseSerializer(serializers.Serializer):
@@ -151,3 +152,4 @@ class LoginResponseSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=500)
     verification_status = serializers.BooleanField()
     is_profile_complete = serializers.BooleanField()
+    is_campus_ambassador = serializers.BooleanField()
