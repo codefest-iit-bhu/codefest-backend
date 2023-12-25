@@ -100,6 +100,7 @@ class Profile(models.Model):
     resume = models.FileField(upload_to=get_file_path, null=True, blank=True)
     is_profile_complete = models.BooleanField(default=False)
     referral_count = models.IntegerField(default=0)
+    ca_score = models.IntegerField(default=0)
     fcm_token = models.CharField(max_length=255, null=True, blank=True)
     is_campus_ambassador = models.BooleanField(default=False)
 
@@ -241,4 +242,6 @@ class CA(models.Model):
 def update_ref_count(sender, instance, **kwargs):
     profile = instance.by
     profile.referral_count += 1
+    if instance.by.institute_name==instance.to.institute_name:
+        profile.ca_score += 1
     profile.save()

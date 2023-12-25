@@ -180,8 +180,8 @@ class LeaderBoardView(generics.ListAPIView):
         is_campus_ambassador = user.profile.is_campus_ambassador
 
         if is_campus_ambassador:
-            return Profile.objects.filter(is_campus_ambassador=True).exclude(referral_count=0).order_by(
-                "-referral_count")[:10]
+            return Profile.objects.filter(is_campus_ambassador=True).exclude(ca_score=0).order_by(
+                "-ca_score")[:10]
         else:
             return Profile.objects.filter(is_campus_ambassador=False).exclude(referral_count=0).order_by(
                 "-referral_count")[:10]
