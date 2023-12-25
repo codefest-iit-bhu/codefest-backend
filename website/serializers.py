@@ -50,6 +50,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     referral_code = serializers.CharField(max_length=200, read_only=True)
     provider = serializers.SerializerMethodField()
     referral_count = serializers.IntegerField(read_only=True)
+    ca_score = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Profile
@@ -67,6 +68,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "is_profile_complete",
             "referral_code",
             "referral_count",
+            "ca_score",
             "provider",
             "is_verified",
             "is_campus_ambassador"
@@ -95,6 +97,15 @@ class ProfileSerializer(serializers.ModelSerializer):
         if year < 1:
             raise serializers.ValidationError("Incorrect Year Specified")
         return year
+    
+    def validate_is_campus_ambassador(self, is_campus_ambassador):
+        institute_name = self.initial_data.get('institute_name', None)
+        campus_ambassadors_count = Profile.objects.filter(institute_name=institute_name, is_campus_ambassador=True).count()
+        if campus_ambassadors_count>1 and institute_name!='OTHER INSTITUTE':
+            raise serializers.ValidationError(
+                "Only 2 campus ambassadors allowed per college."
+            )
+        return is_campus_ambassador
 
     def update(self, instance, data):
         names = data["name"].split(" ", 1)
