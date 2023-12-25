@@ -277,7 +277,7 @@ class HandleSerializer(serializers.ModelSerializer):
 class LeaderBoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("name", "institute_name", "referral_count")
+        fields = ("name", "institute_name", "referral_count", "ca_score")
 
 
 class ResumeSerializer(serializers.ModelSerializer):
