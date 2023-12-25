@@ -113,6 +113,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.user.last_name = names[1] if len(names) > 1 else ""
         instance.user.save()
         logger.info("[PUT Response]  (" + str(instance) + ") :" + str(data))
+        super().update(instance, data)
         instance.get_or_set_profile_status(toSet=True)
         return super().update(instance, data)
 
