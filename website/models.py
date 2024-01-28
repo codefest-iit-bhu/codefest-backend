@@ -33,18 +33,20 @@ class Event(models.Model):
     min_members = models.PositiveIntegerField(default=1)
     max_members = models.PositiveIntegerField(default=1)
     is_registration_on = models.BooleanField(default=True)
+    form_link = models.CharField(max_length=1000, null=True, blank=True)
     slug = models.SlugField(max_length=50, default="default")
 
     def create_team(self, profile, t_name):
-
-        team = Team.objects.create(event=self, creator=profile, name=t_name)
-
-        team.access_code = hashids_team.encode(team.id)
-        if self.max_members == 1:
-            team.is_active = True
-        team.save()
-        member = Membership.objects.create(team=team, profile=profile)
-        return team
+        if self.is_registration_on == False:
+            raise ValidationError("Registrations are not live for this event")
+        else:
+            team = Team.objects.create(event=self, creator=profile, name=t_name)
+            team.access_code = hashids_team.encode(team.id)
+            if self.max_members == 1:
+                team.is_active = True
+            team.save()
+            member = Membership.objects.create(team=team, profile=profile)
+            return team
 
     def __str__(self):
         return self.name
@@ -149,6 +151,7 @@ class ValidReferral(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    registration_time = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(
         Profile, through="Membership", related_name="team_members"
     )
