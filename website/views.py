@@ -45,20 +45,6 @@ class EventDetailView(generics.RetrieveAPIView):
     def get_queryset(self):
         return Event.objects.all()
 
-
-
-class EventDetailView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [
-        authentication.TokenAuthentication,
-        authentication.SessionAuthentication,
-    ]
-    serializer_class = EventSerializer
-    lookup_field = "pk"
-    queryset = Event.objects.all()
-
-
-
 class ProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [
