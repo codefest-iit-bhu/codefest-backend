@@ -1,5 +1,6 @@
 import hashlib
 import uuid
+import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -151,7 +152,7 @@ class ValidReferral(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    registration_time = models.DateTimeField(auto_now_add=True)
+    registration_time = models.DateTimeField(default=datetime.datetime.now())
     members = models.ManyToManyField(
         Profile, through="Membership", related_name="team_members"
     )
