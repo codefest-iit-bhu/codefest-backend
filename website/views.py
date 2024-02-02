@@ -20,14 +20,30 @@ logger = logging.getLogger("django")
 
 
 class EventListView(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [
-        authentication.TokenAuthentication,
-        authentication.SessionAuthentication,
-    ]
-    serializer_class = EventSerializer
-    queryset = Event.objects.all()
+    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return EventSerializer
+        else:
+            return DisplayEventSerializer
+
+    def get_queryset(self):
+        return Event.objects.all()
+
+class EventDetailView(generics.RetrieveAPIView):
+    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field = "pk"
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return EventSerializer
+        else:
+            return DisplayEventSerializer
+
+    def get_queryset(self):
+        return Event.objects.all()
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
