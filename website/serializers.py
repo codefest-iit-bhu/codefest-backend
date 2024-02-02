@@ -243,6 +243,7 @@ class EventSerializer(serializers.ModelSerializer):
             "is_registration_on",
             "min_members",
             "max_members",
+            "form_link",
             "team",
         ]
 
