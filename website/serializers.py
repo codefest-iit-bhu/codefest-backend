@@ -229,6 +229,20 @@ class RemoveFromTeamSerializer(serializers.Serializer):
         team = data["team"]
         team.leave_team(data["member"])
         return team
+    
+class DisplayEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "is_registration_on",
+            "min_members",
+            "max_members",
+            "form_link",
+        ]
+
 
 
 class EventSerializer(serializers.ModelSerializer):
