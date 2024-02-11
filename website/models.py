@@ -38,16 +38,14 @@ class Event(models.Model):
     slug = models.SlugField(max_length=50, default="default")
 
     def create_team(self, profile, t_name):
-        if self.is_registration_on == False:
-            raise ValidationError("Registrations are not live for this event")
-        else:
-            team = Team.objects.create(event=self, creator=profile, name=t_name)
-            team.access_code = hashids_team.encode(team.id)
-            if self.max_members == 1:
-                team.is_active = True
-            team.save()
-            member = Membership.objects.create(team=team, profile=profile)
-            return team
+
+        team = Team.objects.create(event=self, creator=profile, name=t_name)
+
+        team.access_code = hashids_team.encode(team.id)
+        if self.min_members <= 1:
+            team.is_active = True
+        team.save()
+        return team
 
     def __str__(self):
         return self.name
