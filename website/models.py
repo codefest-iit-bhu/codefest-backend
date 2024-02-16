@@ -41,8 +41,8 @@ class Event(models.Model):
         if self.is_registration_on == False:
             raise ValidationError("Registrations are not live for this event")
         else:
-            team = Team.objects.create(event=self, creator=profile, name=t_name)
-            team.access_code = hashids_team.encode(team.id)
+            access_code = hashids_team.encode(Team.objects.latest("id").id + 1)
+            team = Team.objects.create(event=self, creator=profile, name=t_name, access_code=access_code)
             if self.min_members <= 1:
                 team.is_active = True
             team.save()
