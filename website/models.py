@@ -14,7 +14,7 @@ from hashids import Hashids
 
 from Auth.utils import FirebaseAPI
 
-hashids_team = Hashids(min_length=7, salt="4fa6b775541a91c93fe92df0788d2321")
+hashids_team = Hashids(min_length=8, salt="5OtYLj/PtkLOpQewWdEj+jklT+oMjlJY7=")
 Hashids_referral = Hashids(min_length=5, salt="bbfdac22c617317cdc9ea7bc3a760188")
 
 # Create your models here.
