@@ -66,3 +66,4 @@ wrapt==1.11.1
 pycodestyle==2.10.0
 mysqlclient==2.2.0
 antlr4-python3-runtime==4.11
+shortuuid==1.0.11

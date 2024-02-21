@@ -1,6 +1,6 @@
 import hashlib
 import uuid
-import datetime
+import shortuuid
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -14,7 +14,7 @@ from hashids import Hashids
 
 from Auth.utils import FirebaseAPI
 
-hashids_team = Hashids(min_length=8, salt="5OtYLj/PtkLOpQewWdEj+jklT+oMjlJY7=")
+hashids_team = Hashids(min_length=6, salt="bbfdac22c617317cdc9ea7bc3a760188")
 Hashids_referral = Hashids(min_length=5, salt="bbfdac22c617317cdc9ea7bc3a760188")
 
 # Create your models here.
@@ -41,8 +41,20 @@ class Event(models.Model):
         if self.is_registration_on == False:
             raise ValidationError("Registrations are not live for this event")
         else:
-            access_code = hashids_team.encode(Team.objects.latest("id").id + 1)
-            team = Team.objects.create(event=self, creator=profile, name=t_name, access_code=access_code)
+            try_max = 10
+            team = None
+            while try_max>0:
+                try_max-=1
+                try:
+                    access_code = shortuuid.ShortUUID().random(length=8)
+                    team = Team.objects.create(event=self, creator=profile, name=t_name, access_code=access_code)
+                    try_max = 0
+                except:
+                    continue
+            
+            if not team:
+                raise ValueError("Couldnt generate random access_code")
+            
             if self.min_members <= 1:
                 team.is_active = True
             team.save()
